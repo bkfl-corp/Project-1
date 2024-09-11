@@ -41,7 +41,7 @@ class Ship:
         return self._ship_length
 
     @property
-    def hull(self) -> tuple[int, int, bool]:
+    def hull(self) -> list[tuple[int, int, bool]]:
         return self._hull
 
     def take_hit(self, coordinate: tuple[int, int]) -> None:
