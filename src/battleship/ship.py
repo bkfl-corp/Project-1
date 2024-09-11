@@ -5,7 +5,7 @@ class Ship:
 
     def __init__(self, ship_length: int, start_coord: tuple[int, int], end_coord: tuple[int, int]) -> None:
 
-        if not 1 > ship_length > 11:
+        if not (1 < ship_length < 11):
             raise ValueError('Invalid ship length! Must be between 1 and 10.')
 
         self._ship_length: int = ship_length
@@ -46,3 +46,5 @@ class Ship:
 
     def take_hit(self, coordinate: tuple[int, int]) -> None:
         raise NotImplementedError
+
+        return None
