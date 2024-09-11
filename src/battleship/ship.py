@@ -40,5 +40,9 @@ class Ship:
         """Length of ship as an immutable attribute."""
         return self._ship_length
 
+    @property
+    def hull(self) -> tuple[int, int, bool]:
+        return self._hull
+
     def take_hit(self, coordinate: tuple[int, int]) -> None:
         raise NotImplementedError
