@@ -18,6 +18,9 @@ class Ship:
         
         if start_coord > end_coord:
             raise ValueError('Start coordinate is bigger than end coordinate. Maybe swapped coordinates?')
+
+        if end_coord[0] - start_coord[0] == self._ship_length and end_coord[1] - start_coord[1] == self._ship_length:
+            raise ValueError('Tried to place ship in coordinates that don\'t match length.')
         
         #implies horizontal placement.
         if start_coord[0] == end_coord[0]:
@@ -32,7 +35,6 @@ class Ship:
 
         self.sunk: bool = False
     
-    #what is a property? see: https://realpython.com/python-property/
     @property
     def ship_length(self) -> int:
         """Length of ship as an immutable attribute."""
