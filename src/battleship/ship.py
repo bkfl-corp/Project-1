@@ -24,11 +24,11 @@ class Ship:
         
         #implies horizontal placement.
         if start_coord[0] == end_coord[0]:
-            self._hull: tuple[int, int, bool] = [(start_coord[0], y, False) for y in range(start_coord[1], end_coord[1]+1)]
+            self._hull: list[tuple[int, int, bool]] = [(start_coord[0], y, False) for y in range(start_coord[1], end_coord[1]+1)]
 
         #implies vertical placement.
-        elif start_coord[1] == start_coord[1]:
-            self._hull: tuple[int, int, bool] = [(x, start_coord[1], False) for x in range(start_coord[0], end_coord[0]+1)]
+        elif start_coord[1] == end_coord[1]:
+            self._hull: list[tuple[int, int, bool]] = [(x, start_coord[1], False) for x in range(start_coord[0], end_coord[0]+1)]
 
         else:
             raise('Invalid ship placement! Make sure that it is horizontal or vertical.')

@@ -10,9 +10,9 @@ class Player:
 
         #hold the state of the board. the i,j entry of the board represents the if a shot has been fired at coordinate i,j.
         #note that this contains NO information about whether that was a hit or a miss, that information is tracked by each ship.
-        self._board_state: bool = [ [ False for _ in range(10) ] for _ in range(10) ]
+        self._board_state: list[list[bool]] = [ [ False for _ in range(10) ] for _ in range(10) ]
 
-        self._num_alive_ships = len(self._ships)
+        self._num_alive_ships: int = len(self._ships)
     
     @property
     def num_ships(self) -> int:
