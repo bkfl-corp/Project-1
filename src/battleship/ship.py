@@ -24,10 +24,16 @@ class Ship:
         
         #implies horizontal placement.
         if start_coord[0] == end_coord[0]:
+            if abs(start_coord[1] - end_coord[1]) + 1 != ship_length:
+                raise ValueError('Ship length does not match distance between coordinates')
+            self._ship_length: int = ship_length
             self._hull: list[tuple[int, int, bool]] = [(start_coord[0], y, False) for y in range(start_coord[1], end_coord[1]+1)]
 
         #implies vertical placement.
         elif start_coord[1] == end_coord[1]:
+            if abs(start_coord[0] - end_coord[0]) + 1!= ship_length:
+                raise ValueError('Ship length does not match distance between coordinates')
+            self._ship_length: int = ship_length
             self._hull: list[tuple[int, int, bool]] = [(x, start_coord[1], False) for x in range(start_coord[0], end_coord[0]+1)]
 
         else:
@@ -45,6 +51,9 @@ class Ship:
         return self._hull
 
     def take_hit(self, coordinate: tuple[int, int]) -> None:
-        raise NotImplementedError
-
-        return None
+        temp_tup = (coordinate) + (False, )
+        if temp_tup in self._hull:
+            replace_index = self._hull.index(temp_tup)
+            self._hull[replace_index] = (coordinate) + (True, )
+            return
+        raise ValueError("Invalid coordinates, no vulnerable ship hull at this location.")
