@@ -27,16 +27,56 @@ class Player:
         return self.num_ships - self.num_alive_ships
 
     def take_hit(self, coordinate: tuple[int, int]) -> None:
-        """Update the state of the board and ships."""
-        raise NotImplementedError
+        """Take a hit at the given coordinate and update the board state."""
+        for ship in self._ships:
+            for i, hull in enumerate(ship.hull):
+                if hull[:2] == coordinate:
+                    ship.take_hit(i)
+                    if ship.sunk:
+                        self._num_alive_ships -= 1
+                    self._board_state[coordinate[0]][coordinate[1]] = True
+                    return None
+                
+                
+    def _get_cell_state(self, i: int, j: int, private: bool) -> str:
+        """Serve as a helper method to get the state of each cell for private and public boards."""
+        # Check if the cell is part of any ship
+        for ship in self._ships:
+            for x, y, hit in ship.hull:
+                if (i, j) == (x, y):
+                    if ship.sunk:
+                        return '@' # Sunken ship
+                    elif hit:
+                        return 'X' # Hit ship
+                    elif private:
+                        return 'S' # Ship but not hit (only visible in private view)
+
+        # No ship in this cell
+        if self._board_state[i][j]:
+            return 'O' # Shot at, but missed
+        return '~' # Unshot cell
 
     def display_board_private(self) -> None:
         """Display the state of the board to the player."""
-        raise NotImplementedError
+        print("  " + " ".join(str(i) for i in range(10))) # Print top border numbers
+        print(" +" + "-" * 21 + "+") # Top border
+
+        for i in range(10):
+            row: list[str] = [self._get_cell_state(i, j, private=True) for j in range(10)]
+            print(f"{i}| {' '.join(row)} |") # Board with side borders & side boarder numbers
+        
+        print(" +" + "-" * 21 + "+") # Bottom border
 
     def display_board_public(self) -> None:
         """Display the state of the board to the opponent."""
-        raise NotImplementedError
+        print("  " + " ".join(str(i) for i in range(10))) # Print top border numbers
+        print(" +" + "-" * 21 + "+") # Top border
+
+        for i in range(10):
+            row: list[str] = [self._get_cell_state(i, j, private=False) for j in range(10)]
+            print(f"{i}| {' '.join(row)} |") # Board with side borders & side boarder numbers
+
+        print(" +" + "-" * 21 + "+") # Bottom border
 
     def add_ship(self, ship: Ship) -> None:
         self._ships.append(ship)
