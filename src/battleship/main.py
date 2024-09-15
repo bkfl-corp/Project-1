@@ -19,9 +19,11 @@ def main():
             continue
         
         #reprompt the user if an invalid int is input.
-        if not 1 < num_ships  < 5:
+        if not 1 <= num_ships  <= 5:
             print('Please input a number between 1 and 5.')
             continue
+
+        break
 
     Game(num_ships).loop()
 
