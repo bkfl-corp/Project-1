@@ -139,4 +139,5 @@ class Game:
                 temp_player: Player = current_player
                 current_player = opponent_player
                 opponent_player = temp_player
+                made_hit = False
                 turn_count += 1
