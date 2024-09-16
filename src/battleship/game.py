@@ -1,34 +1,64 @@
-import os
-from time import sleep
+"""
+Name of program: game.py
+Description: Class to control game and game state.
+Inputs: None
+Outputs: None
+Other sources for code: N/A
+Authors: James Hurd, Joshua Lee, Will Whitehead, Trent Gould, Ky Le
+Creation date: 09/11/25
+"""
 
-#https://docs.python.org/3/library/getpass.html#getpass.getpass
+#used for clearing the screen, as we need to know what is we are on to send the proper control character.
+import os
+
+#used for getting passwords: https://docs.python.org/3/library/getpass.html#getpass.getpass
 from getpass import getpass
 
+#import player class.
 from player import Player
+
+#import ship class.
 from ship import Ship
+
+#import exception that denotes invalid ship length.
 from exceptions.invalid_ship_length_error import InvalidShipLengthError
+
+#import exception that denotes invalid coordinates.
 from exceptions.invalid_coordinates_error import InvalidCoordinatesError
 
 class Game:
     """
     For managing the overall state of a game of battleship as well as interactions between the players.
     """
-    """Initialize Player objects, gets their password for the game, and has them input their ship locations"""
+
     def __init__(self, num_ships: int) -> None:
+        """Initialize Player objects, gets their password for the game, and has them input their ship locations"""
         
+        #print welcome message.
         print('================\nWelcome Player 1\n================')
         
+        #get player name.
         player_one_name: str = input('What\'s your name? ')
+
+        #get player password.
         self._player_one_pass: str = getpass('Enter your password: ') 
+
+        #create player 1 object.
         self._player_one: Player = Game._build_player(player_one_name, num_ships)
 
         #this clears the screen: https://stackoverflow.com/questions/2084508/clear-the-terminal-in-python
         os.system('cls' if os.name == 'nt' else 'clear')
-
+        
+        #print welcome message
         print('================\nWelcome Player 2\n================')
-
+        
+        #get player name.
         player_two_name: str = input('What\'s your name? ')
+
+        #get player password.
         self._player_two_pass: str = getpass('Enter your password: ')
+
+        #build player 2 object.
         self._player_two: Player = Game._build_player(player_two_name, num_ships)
 
         #this clears the screen: https://stackoverflow.com/questions/2084508/clear-the-terminal-in-python
@@ -51,7 +81,7 @@ class Game:
                 player.display_board_private()
 
                 try:
-                    start_coord_raw: list[str, str] = input(f'Enter starting x,y coordinate for a ship that is {ship_length} long: ').replace(' ', '').split(',')
+                    start_coord_raw: list[str, str] = input(f'Enter starting coordinate (number, letter) for a ship that is {ship_length} long: ').replace(' ', '').split(',')
                     start_coord: tuple[int, int] = Game._parse_coordinate(int(start_coord_raw[0]), start_coord_raw[1].upper())
 
                     end_coord_raw: list[str, str] = input(f'Enter ending x,y coordinate: ').split(',')
@@ -84,7 +114,6 @@ class Game:
 
     #password checking loop
     def _check_pass(self, player: Player) -> None:
-        pass_fail_count: int = 0
         player_pass: str = self._player_one_pass if player is self._player_one else self._player_two_pass
 
         while True:
@@ -93,15 +122,6 @@ class Game:
                 break
 
             print('Incorrect! Please try again.')
-            pass_fail_count += 1
-
-            if pass_fail_count >= 5:
-                print("Failed to enter password five or more times!\n Please wait five seconds...")
-                for x in range (0,5):
-                    print(".", end="")
-                    sleep(1)
-                print("\n")
-                pass_fail_count = 0
 
     def loop(self) -> None:
         """Main gameplay loop. Displays menu and executes choices."""
