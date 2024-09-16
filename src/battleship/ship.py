@@ -21,7 +21,9 @@ class Ship:
             raise InvalidCoordinatesError('Invalid end coordinate! Must be between (0,0) and (9,9).')
         
         if start_coord > end_coord:
-            raise InvalidCoordinatesError('Start coordinate is bigger than end coordinate. Maybe swapped coordinates?')
+            temp: tuple[int, int] = end_coord
+            end_coord: tuple[int, int] = start_coord
+            start_coord: tuple[int, int] = temp
 
         if end_coord[0] - start_coord[0] == self._ship_length and end_coord[1] - start_coord[1] == self._ship_length:
             raise InvalidCoordinatesError('Tried to place ship in coordinates that don\'t match length.')
