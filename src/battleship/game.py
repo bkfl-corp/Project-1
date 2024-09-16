@@ -78,11 +78,12 @@ class Game:
                 player.display_board_private()
 
                 try:
-                    start_coord_raw: list[str, str] = input(f'Enter starting coordinate (number, letter) for a ship that is {ship_length} long: ').replace(' ', '').split(',')
-                    start_coord: tuple[int, int] = Game._parse_coordinate(int(start_coord_raw[0]), start_coord_raw[1].upper())
+                    # Allow either "A1" or "A,1" format for input
+                    start_coord_input = input(f'Enter starting coordinate for a ship that is {ship_length} long (e.g., A1 or A,1): ').replace(' ', '').upper()
+                    start_coord = Game._parse_coordinate(start_coord_input)
 
-                    end_coord_raw: list[str, str] = input(f'Enter ending x,y coordinate: ').split(',')
-                    end_coord: tuple[int, int] = Game._parse_coordinate(int(end_coord_raw[0]), end_coord_raw[1].upper())
+                    end_coord_input = input(f'Enter ending coordinate for the ship (e.g., A1 or A,1): ').replace(' ', '').upper()
+                    end_coord = Game._parse_coordinate(end_coord_input)
 
                     ship: Ship = Ship(ship_length, start_coord, end_coord)
                     
@@ -100,14 +101,30 @@ class Game:
                     continue
 
         return player
+
     
     @staticmethod
-    def _parse_coordinate(row: int, col: str) -> tuple[int,int]:
-        """Converts a (int, char) coordinate pair to a tuple of ints that is used internally."""
-        col_num: int = "ABCDEFGHIJ".find(col)
-        if col_num == -1:
-            raise InvalidCoordinatesError("Coordinate not on board.")
+    def _parse_coordinate(input_str: str) -> tuple[int, int]:
+        """Converts a string in 'A1' or 'A,1' format to a tuple of ints (row, col)"""
+        input_str = input_str.replace(' ', '').upper()  # Remove spaces and normalize to uppercase
+
+        # Allow either "A1" or "A,1" format for input
+        if ',' in input_str:  # Format is A,1
+            col_str, row_str = input_str.split(',')
+        else:  # Format is A1
+            col_str, row_str = input_str[0], input_str[1:]
+
+        # Validate the row and column
+        if not row_str.isdigit() or len(row_str) > 2:
+            raise InvalidCoordinatesError(f"Invalid row number '{row_str}'. Please use a number between 1 and 10.")
+
+        row = int(row_str) - 1  # Convert row to 0-indexed
+        col_num: int = "ABCDEFGHIJ".find(col_str)
+        if col_num == -1 or not (0 <= row <= 9):
+            raise InvalidCoordinatesError("Coordinate not on board. Please use a valid format (e.g., A1 or A,1).")
+
         return (row, col_num)
+
 
     #password checking loop
     def _check_pass(self, player: Player) -> None:
@@ -150,8 +167,8 @@ class Game:
                     case 2:
                         try:
                             opponent_player.display_board_public()
-                            coord_raw: list[str, str] = input(f'Enter an x,y coordinate:  ').replace(' ', '').split(',')
-                            coord: tuple[int, int] = Game._parse_coordinate(int(coord_raw[0]), coord_raw[1].upper())
+                            coord_input = input(f'Enter a coordinate to fire (e.g., A1 or A,1): ').replace(' ', '').upper()
+                            coord: tuple[int, int] = Game._parse_coordinate(coord_input)
 
                             print('Hit!' if opponent_player.take_hit(coord) else 'Miss!')
 
@@ -161,6 +178,7 @@ class Game:
                                 
                         except (AlreadyFiredError, InvalidCoordinatesError) as e:
                             print(e)
+
 
 
                             
