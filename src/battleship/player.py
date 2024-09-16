@@ -100,7 +100,7 @@ class Player:
         for other_ship in self._ships:
             for other_x, other_y, _ in other_ship.hull:
                 for x, y, _ in ship.hull:
-                    if x == other_x or y == other_y:
+                    if (x,y) == (other_x, other_y):
                         raise ValueError('Placement intersects another ship.')
 
         self._ships.append(ship)
