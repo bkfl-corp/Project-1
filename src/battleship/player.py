@@ -46,15 +46,10 @@ class Player:
         self._board_state[coordinate[0]][coordinate[1]] = True
 
         for ship in self._ships:
-            # Check if the hit is on any ship
             for hull in ship.hull:
-                # If the hit is on the ship
                 if hull[:2] == coordinate:
-                    # Mark the hit on the ship
                     ship.take_hit(coordinate)
-                    # Check if the ship is sunk
                     if ship.sunk:
-                        # Decrement the number of alive ships
                         self._num_alive_ships -= 1
                     return True
         return False
@@ -63,11 +58,8 @@ class Player:
         """Serve as a helper method to get the state of each cell for private and public boards."""
         # Check if the cell is part of any ship
         for ship in self._ships:
-            # Check if the cell is part of the ship
             for x, y, hit in ship.hull:
-                # If the cell is part of the ship
                 if (i, j) == (x, y):
-                    # Check if the ship is sunk
                     if ship.sunk:
                         return '@' # Sunken ship
                     elif hit:
@@ -82,7 +74,7 @@ class Player:
 
     def display_board_private(self) -> None:
         """Display the state of the board to the player."""
-        print(' A B C D E F G H I J ') # Print top border labels.
+        print('   A B C D E F G H I J ') # Print top border labels.
         print(" +" + "-" * 21 + "+") # Top border
 
         for i in range(10):
@@ -93,7 +85,7 @@ class Player:
 
     def display_board_public(self) -> None:
         """Display the state of the board to the opponent."""
-        print(' A B C D E F G H I J ') # Print top border labels.
+        print('   A B C D E F G H I J ') # Print top border labels.
         print(" +" + "-" * 21 + "+") # Top border
 
         for i in range(10):
@@ -106,10 +98,8 @@ class Player:
         
         #validate placement.
         for other_ship in self._ships:
-            # Check if the ship intersects with any other ship
             for other_x, other_y, _ in other_ship.hull:
                 for x, y, _ in ship.hull:
-                    #  If the coordinate of the ship is the same as the coordinate of another ship
                     if (x,y) == (other_x, other_y):
                         raise ValueError('Placement intersects another ship.')
 
