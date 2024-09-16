@@ -6,6 +6,8 @@ from getpass import getpass
 
 from player import Player
 from ship import Ship
+from exceptions.invalid_ship_length_error import InvalidShipLengthError
+from exceptions.invalid_coordinates_error import InvalidCoordinatesError
 
 class Game:
     """
@@ -14,27 +16,29 @@ class Game:
     """Initialize Player objects, gets their password for the game, and has them input their ship locations"""
     def __init__(self, num_ships: int) -> None:
         
-        print("""================\nWelcome Player 1\n================""")
-
+        print('================\nWelcome Player 1\n================')
+        
+        player_one_name: str = input('What\'s your name? ')
         self._player_one_pass: str = getpass('Enter your password: ') 
-        self._player_one: Player = Game.build_player(num_ships)
+        self._player_one: Player = Game._build_player(player_one_name, num_ships)
 
         #this clears the screen: https://stackoverflow.com/questions/2084508/clear-the-terminal-in-python
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        print("""================\nWelcome Player 2\n================""")
+        print('================\nWelcome Player 2\n================')
 
+        player_two_name: str = input('What\'s your name? ')
         self._player_two_pass: str = getpass('Enter your password: ')
-        self._player_two: Player = Game.build_player(num_ships)
+        self._player_two: Player = Game._build_player(player_two_name, num_ships)
 
         #this clears the screen: https://stackoverflow.com/questions/2084508/clear-the-terminal-in-python
         os.system('cls' if os.name == 'nt' else 'clear')
 
     @staticmethod
-    def build_player(num_ships: int) -> Player:
+    def _build_player(name: str, num_ships: int) -> Player:
         """Talk to the user and initialize a player object."""
         
-        player: Player = Player()
+        player: Player = Player(name)
 
         ship_length: int = 0
         
@@ -47,35 +51,50 @@ class Game:
                 player.display_board_private()
 
                 try:
-                    start_coord: tuple[int, int] = tuple(map(int, input(f'Enter starting x,y coordinate for a ship that is {ship_length} long: ').split(',')))
-                    end_coord: tuple[int, int] = tuple(map(int, input(f'Enter ending x,y coordinate: ').split(',')))
+                    start_coord_raw: list[str, str] = input(f'Enter starting x,y coordinate for a ship that is {ship_length} long: ').replace(' ', '').split(',')
+                    start_coord: tuple[int, int] = Game._parse_coordinate(int(start_coord_raw[0]), start_coord_raw[1].upper())
+
+                    end_coord_raw: list[str, str] = input(f'Enter ending x,y coordinate: ').split(',')
+                    end_coord: tuple[int, int] = Game._parse_coordinate(int(end_coord_raw[0]), end_coord_raw[1].upper())
+
                     ship: Ship = Ship(ship_length, start_coord, end_coord)
-                    player.add_ship(ship)
+                    
+                    try:
+                        player.add_ship(ship)
+            
+                    except ValueError:
+                        print('This placement intersects another ship, please try again.')
+                        continue
+
                     break
 
-                except ValueError:
+                except (InvalidShipLengthError, InvalidCoordinatesError) as e:
+                    print(f'[ERROR] {e} Please try again.')
                     continue
 
         return player
-
-    #returns a player's set password (VERY NOT SECURE)
-    def _get_pass(self, current_player: Player) -> str:
-        if current_player == self._player_one:
-            return self._player_one_pass
-        elif current_player == self._player_two:
-            return self._player_two_pass
+    
+    @staticmethod
+    def _parse_coordinate(row: int, col: str) -> tuple[int,int]:
+        """Converts a (int, char) coordinate pair to a tuple of ints that is used internally."""
+        col_num: int = "ABCDEFGHIJ".find(col)
+        if col_num == -1:
+            raise InvalidCoordinatesError("Coordinate not on board.")
+        return (row, col_num)
 
     #password checking loop
-    def check_pass(self, current_player: Player) -> None:
+    def _check_pass(self, player: Player) -> None:
         pass_fail_count: int = 0
+        player_pass: str = self._player_one_pass if player is self._player_one else self._player_two_pass
+
         while True:
-            check: str = input("Enter your password: ")
-            if check == PASS:
-                print("PASS")
-                pass_fail_count = 0
+            check: str = getpass(f'[{player.name}]: Enter your password: ')
+            if check == player_pass:
                 break
-            else:
-                pass_fail_count += 1
+
+            print('Incorrect! Please try again.')
+            pass_fail_count += 1
+
             if pass_fail_count >= 5:
                 print("Failed to enter password five or more times!\n Please wait five seconds...")
                 for x in range (0,5):
@@ -87,57 +106,55 @@ class Game:
     def loop(self) -> None:
         """Main gameplay loop. Displays menu and executes choices."""
         turn_count: int = 0 
-        current_player: Player = self.player_one #start with player 1
-        opponent_player: Player = self.player_two
-        made_hit: bool = False
+        current_player: Player = self._player_one #start with player 1
+        opponent_player: Player = self._player_two
         while True: #loop infinitely! (Until break is called)
             #password check
-            self.check_pass(current_player)
-
+            self._check_pass(current_player)
+        
             while True:
-            print(f"================\nTURN %d\n================" turn_count)
-            print("[0] PASS")
-            print("[1] CHECK YOUR BOARD")
-            print("[2] CHECK YOUR HITS")
-            print("[3] MAKE A HIT")
-            print("================")
-            player_input: str = input("Input: ")
-            match player_input:
-                case "0":
-                    break
-                case "1":
-                    current_player.display_board_private()
-                case "2":
-                    opponent_player.display_board_public()
-                case "3":
-                    if made_hit != True:
+                print(f'================\nTURN {turn_count}\n================')
+                print('[0] CHECK YOUR BOARD\n[1] CHECK OPPONENTS BOARD\n[2] FIRE\n================')
+                try:
+                    player_input: int = int(input('What would you like to do?: '))
+
+                    if not 0 <= player_input <= 3:
+                        raise ValueError
+
+                except ValueError:
+                    print('Invalid input, please choose off of the menu.')
+                    continue
+
+                match player_input:
+                    case 0:
+                        current_player.display_board_private()
+                    case 1:
+                        opponent_player.display_board_public()
+                    case 2:
                         try:
-                            x_coord: int = int(input("Input column number: " ))
-                            y_coord: int = int(input("Input row number: " ))
-                            opponent_player.take_hit((x_coord, y_coord))
-                            #to print "Hit" or "Miss", we need a method from player to check if the hit is true or not
-                            
-                        except:
-                            print("BAD INPUT, TRY AGAIN")
-                    else:
-                        print("You have already tried a hit this turn")
-                case _:
-                    print("BAD INPUT, TRY AGAIN")
-            
+                            opponent_player.display_board_public()
+                            coord_raw: list[str, str] = input(f'Enter an x,y coordinate:  ').replace(' ', '').split(',')
+                            coord: tuple[int, int] = Game._parse_coordinate(int(coord_raw[0]), coord_raw[1].upper())
+
+                            print('Hit!' if opponent_player.take_hit(coord) else 'Miss!')
+
+                            opponent_player.display_board_public()
+                            input('Press ENTER to continue')
+                            break
+                                
+                        except InvalidCoordinatesError:
+                            print("Please input a valid coordinate.")
+
             #check if either p1 or p2's ships are all destroyed
             #(possibly take this block and put it into its own function)
-            if self._player_one.num_alive_ships() == 0:
-                print("""================\n Player 2 Wins!\n================""")
+            if opponent_player.num_alive_ships == 0:
+                print(f'================\n {self._player_two.name} Wins!\n================')
                 break #leave the while loop
-            elif self._player_two.num_alive_ships() == 0:
-                print("""================\n Player 1 Wins!\n================""")
-                break
-            else:
-                #clear screen
-                os.system('cls' if os.name == 'nt' else 'clear')
-                #swap current player with opponent player
-                temp_player: Player = current_player
-                current_player = opponent_player
-                opponent_player = temp_player
-                made_hit = False
-                turn_count += 1
+
+            #clear screen
+            os.system('cls' if os.name == 'nt' else 'clear')
+            #swap current player with opponent player
+            temp_player: Player = current_player
+            current_player = opponent_player
+            opponent_player = temp_player
+            turn_count += 1
