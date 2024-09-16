@@ -109,6 +109,7 @@ class Game:
                     break
 
                 except (InvalidShipLengthError, InvalidCoordinatesError) as e:
+                    # If the ship length is invalid or the coordinates are invalid, ask for coordinates again
                     print(f'[ERROR] {e} Please try again.')
                     continue
 
