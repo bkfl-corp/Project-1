@@ -1,7 +1,7 @@
 # Battleship ⛴️
 
 Welcome to the repository for the best local battleship game ever made! This was created as part of Software Engineering II at the
-University of Kansas.
+University of Kansas by Team 15: The BKFL Corp. 🥬
 
 # How To Play
 
