@@ -1,0 +1,34 @@
+Hours spent: 5 hrs on 9/5
+
+
+
+-	Language 
+  -	Python
+-	UI
+  -	Terminal-based
+  -	How-to play/help option somewhere (in-game or not)
+-	Features/Notes/brain dump
+  -	Password protected
+    -	User 1 can view their board or shoot at User 2, then “complete turn”
+    -	Goes to password screen for User 2 when laptop is passed
+    -	Local multiplayer, each user transition laptop on the password screen
+  -	Unit test / CI
+    -	Establish a robust testing suite for more efficient independent coding
+    -	black/flake8 (code auto formatters for python)
+  -	docs 
+    -	Code comments
+    -	Readme
+    -	Reqs.txt
+    -	license 
+  -	Classes
+    -	Boardview
+      -	1 for player board
+      -	1 for opponent boards
+    -	“Command center”
+      -	Boardviews
+      -	Other player stuff (stats? Hits & misses?)
+  -	Game
+      -	Command centers
+      -	Other gamestate variables
+  -	Ship class  
+    -	dictionary(coordinate) = True
