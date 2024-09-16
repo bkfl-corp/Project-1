@@ -1,6 +1,15 @@
-#import invalid ship error.
-from exceptions import InvalidShipLengthError, InvalidCoordinatesError
+"""
+Name of program: ship.py
+Description: Class to hold information on ships.
+Inputs: None
+Outputs: None
+Other sources for code: N/A
+Authors: James Hurd, Joshua Lee, Will Whitehead, Trent Gould, Ky Le
+Creation date: 09/11/24
+"""
 
+#import exceptions.
+from exceptions import InvalidShipLengthError, InvalidCoordinatesError
 
 class Ship:
     """
@@ -8,7 +17,11 @@ class Ship:
     """
 
     def __init__(self, ship_length: int, start_coord: tuple[int, int], end_coord: tuple[int, int]) -> None:
-
+        """
+        Constructor for ship class.
+        """
+        
+        #make sure shio length is valid.
         if not (0 < ship_length < 11):
             raise InvalidShipLengthError('Invalid ship length! Must be between 1 and 10.')
 

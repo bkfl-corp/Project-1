@@ -115,8 +115,6 @@ class Game:
 
         return player
 
-
-    
     @staticmethod
     def _parse_coordinate(input_str: str) -> tuple[int, int]:
         """Converts a string in 'A1' or 'A,1' format to a tuple of ints (row, col)"""
@@ -141,7 +139,6 @@ class Game:
             raise InvalidCoordinatesError("Coordinate not on board. Please use a valid format (e.g., A1 or A,1).")
 
         return (row, col_num)
-
 
     #password checking loop
     def _check_pass(self, player: Player) -> None:

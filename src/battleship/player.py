@@ -82,25 +82,25 @@ class Player:
 
     def display_board_private(self) -> None:
         """Display the state of the board to the player."""
-        print(' A B C D E F G H I J ') # Print top border labels.
-        print(" +" + "-" * 21 + "+") # Top border
+        print('    A B C D E F G H I J ') # Print top border labels.
+        print('  +' + '-' * 21 + '+') # Top border
 
         for i in range(10):
             row: list[str] = [self._get_cell_state(i, j, private=True) for j in range(10)]
-            print(f"{i}| {' '.join(row)} |") # Board with side borders & side border numbers
+            print(f"{i+1}{' ' if i+1 != 10 else ''}| {' '.join(row)} |") # Board with side borders & side border numbers
         
-        print(" +" + "-" * 21 + "+") # Bottom border
+        print('  +' + '-' * 21 + '+') # Bottom border
 
     def display_board_public(self) -> None:
         """Display the state of the board to the opponent."""
-        print(' A B C D E F G H I J ') # Print top border labels.
-        print(" +" + "-" * 21 + "+") # Top border
+        print('    A B C D E F G H I J ') # Print top border labels.
+        print(' +' + '-' * 21 + '+') # Top border
 
         for i in range(10):
             row: list[str] = [self._get_cell_state(i, j, private=False) for j in range(10)]
-            print(f"{i}| {' '.join(row)} |") # Board with side borders & side boarder numbers
+            print(f"{i+1}{' ' if i+1 != 10 else ''}| {' '.join(row)} |") # Board with side borders & side boarder numbers
 
-        print(" +" + "-" * 21 + "+") # Bottom border
+        print('  +' + '-' * 21 + '+') # Bottom border
 
     def add_ship(self, ship: Ship) -> None:
         
