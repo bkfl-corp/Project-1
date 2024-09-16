@@ -1,4 +1,5 @@
 from ship import Ship
+from exceptions import AlreadyFiredError
 
 class Player:
     """
@@ -38,6 +39,9 @@ class Player:
 
     def take_hit(self, coordinate: tuple[int, int]) -> bool:
         """Take a hit at the given coordinate and update the board state."""
+        
+        if self._board_state[coordinate[0]][coordinate[1]]:
+            raise AlreadyFiredError("You have already fired on this coordinate.")
 
         self._board_state[coordinate[0]][coordinate[1]] = True
 

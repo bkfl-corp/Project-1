@@ -1,5 +1,6 @@
-from exceptions.invalid_ship_length_error import InvalidShipLengthError
-from exceptions.invalid_coordinates_error import InvalidCoordinatesError
+#import invalid ship error.
+from exceptions import InvalidShipLengthError, InvalidCoordinatesError
+
 
 class Ship:
     """

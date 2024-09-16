@@ -21,10 +21,7 @@ from player import Player
 from ship import Ship
 
 #import exception that denotes invalid ship length.
-from exceptions.invalid_ship_length_error import InvalidShipLengthError
-
-#import exception that denotes invalid coordinates.
-from exceptions.invalid_coordinates_error import InvalidCoordinatesError
+from exceptions import InvalidShipLengthError, InvalidCoordinatesError, AlreadyFiredError
 
 class Game:
     """
@@ -162,8 +159,11 @@ class Game:
                             input('Press ENTER to continue')
                             break
                                 
-                        except InvalidCoordinatesError:
-                            print("Please input a valid coordinate.")
+                        except (AlreadyFiredError, InvalidCoordinatesError) as e:
+                            print(e)
+
+
+                            
 
             #check if either p1 or p2's ships are all destroyed
             #(possibly take this block and put it into its own function)
